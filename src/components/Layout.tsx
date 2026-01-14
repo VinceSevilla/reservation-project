@@ -1,0 +1,83 @@
+import { AppShell, Button, Group, Text, Stack, NavLink, Burger } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useAuth } from '../context/useAuth';
+import { supabase } from '../supabase';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useRole } from '../hooks/useRole';
+import { IconLogout, IconHome, IconCalendar, IconDoor, IconClipboard, IconSettings, IconUsers } from '@tabler/icons-react';
+import { ROLE } from '../types/roles';
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  const { user } = useAuth();
+  const { role } = useRole();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    navigate('/auth', { replace: true });
+  };
+
+  const navItems = [
+    { label: 'Dashboard', icon: IconHome, path: '/dashboard' },
+    ...(role === ROLE.Student ? [{ label: 'Create Reservation', icon: IconClipboard, path: '/create-reservation' }] : []),
+    { label: 'Calendar', icon: IconCalendar, path: '/calendar' },
+    { label: 'Rooms', icon: IconDoor, path: '/rooms' },
+    { label: 'Reservations', icon: IconClipboard, path: '/reservations' },
+    ...(role === ROLE.Admin ? [{ label: 'Admin', icon: IconSettings, path: '/admin' }] : []),
+    ...(role === ROLE.Staff || role === ROLE.Admin ? [{ label: 'Staff', icon: IconUsers, path: '/staff' }] : []),
+  ];
+
+  return (
+    <AppShell 
+      header={{ height: 60 }} 
+      navbar={{ 
+        width: 280, 
+        breakpoint: 'sm', 
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened } 
+      }} 
+      padding="md"
+    >
+      <AppShell.Header p="md">
+        <Group justify="space-between" h="100%">
+          <Group>
+            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+            <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
+            <Text fw={700} size="lg">
+              UNI RESERVATION
+            </Text>
+          </Group>
+          <Group gap="xs">
+            <Text size="sm">{user?.email}</Text>
+            <Button size="xs" variant="light" leftSection={<IconLogout size={14} />} onClick={handleLogout}>
+              Logout
+            </Button>
+          </Group>
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Navbar p="md">
+        <Stack gap="xs">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              label={item.label}
+              leftSection={<item.icon size={16} />}
+              onClick={() => navigate(item.path)}
+              active={location.pathname === item.path}
+            />
+          ))}
+        </Stack>
+      </AppShell.Navbar>
+
+      <AppShell.Main>{children}</AppShell.Main>
+    </AppShell>
+  );
+}
