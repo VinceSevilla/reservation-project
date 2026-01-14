@@ -379,7 +379,7 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 ## 👨 Author
 
 **Your Name**
-- GitHub: [@yVinceSevilla](https://github.com/VinceSevilla)
+- GitHub: [@VinceSevilla](https://github.com/VinceSevilla)
 - Email: sevillavinceanold@gmail.com
 - LinkedIn: [Vince Sevilla](https://www.linkedin.com/in/vince-sevilla-87a048380/)
 
@@ -413,7 +413,6 @@ If you have any questions or need help getting started:
 
 **If you find this project useful, please consider giving it a ⭐ on GitHub!**
 
-Made with ❤️ and ☕
 
 [⬆ Back to Top](#-roomreserve)
 
