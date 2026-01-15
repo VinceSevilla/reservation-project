@@ -51,21 +51,39 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    console.log('=== GOOGLE SIGNIN START ===');
     setSigningIn(true);
     setError('');
     try {
-      const { error: err } = await supabase.auth.signInWithOAuth({
+      console.log('Step 1: About to call signInWithOAuth');
+      const redirectUrl = `${window.location.origin}/auth`;
+      console.log('Redirect URL:', redirectUrl);
+      const { data, error: err } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: redirectUrl },
       });
+      console.log('Step 2: signInWithOAuth returned');
+      console.log('Data:', data);
+      console.log('Error:', err);
       if (err) throw err;
+      console.log('Step 3: No error, OAuth should be processing');
     } catch (err: any) {
+      console.error('=== GOOGLE SIGNIN ERROR ===');
+      console.error('Error message:', err.message);
+      console.error('Error object:', err);
       setError(err.message);
       setSigningIn(false);
     }
   };
 
-  if (loading) return <Center h="100vh"><Loader size="lg" /></Center>;
+  if (loading) {
+    console.log('AuthPage loading state is true');
+    return <Center h="100vh"><Loader size="lg" /></Center>;
+  }
+
+  console.log('AuthPage form is visible - rendering');
+  console.log('handleGoogleSignIn function:', typeof handleGoogleSignIn);
+  console.log('signingIn state:', signingIn);
 
   return (
     <Box style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8f9fa' }}>
@@ -123,7 +141,10 @@ export default function AuthPage() {
                   fullWidth
                   size="md"
                   leftSection={<IconBrandGoogle size={18} />}
-                  onClick={handleGoogleSignIn}
+                  onClick={() => {
+                    console.log('Google button clicked!');
+                    handleGoogleSignIn();
+                  }}
                   loading={signingIn}
                 >
                   Google

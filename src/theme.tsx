@@ -2,6 +2,7 @@ import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import type { PropsWithChildren } from 'react';
 import type { MantineThemeOverride } from '@mantine/core';
+import { AuthProvider } from './context/AuthContext';
 
 const theme: MantineThemeOverride = {
   primaryColor: 'blue',
@@ -9,9 +10,11 @@ const theme: MantineThemeOverride = {
 
 export function UIProvider({ children }: PropsWithChildren) {
   return (
-    <MantineProvider theme={theme} defaultColorScheme="light">
-      <Notifications />
-      {children}
-    </MantineProvider>
+    <AuthProvider>
+      <MantineProvider theme={theme} defaultColorScheme="light">
+        <Notifications />
+        {children}
+      </MantineProvider>
+    </AuthProvider>
   );
 }
