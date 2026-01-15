@@ -10,6 +10,7 @@ export function useRole() {
 
   useEffect(() => {
     if (!user) {
+      console.log('useRole: No user, setting loading to false');
       setLoading(false);
       return;
     }

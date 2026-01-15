@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Loader, SimpleGrid, Text, Title, Center, Container, Box } from '@mantine/core';
+import { Card, SimpleGrid, Text, Title, Container, Box } from '@mantine/core';
 import { supabase } from '../supabase';
 import { useRole } from '../hooks/useRole';
 import { useAuth } from '../context/useAuth';
@@ -19,37 +19,41 @@ function StatCard({ label, value }: { label: string; value: number | string }) {
 }
 
 export default function Dashboard() {
-  const { role, loading: roleLoading } = useRole();
+  const { role } = useRole();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ rooms: 0, reservations: 0, pending: 0, today: 0, upcoming: 0 });
+
+  console.log('Dashboard rendering - role:', role, 'user:', user?.email);
 
   useEffect(() => {
     const load = async () => {
-      if (roleLoading) return;
-      setLoading(true);
+      if (!role || !user?.id) return;
 
       if (role === ROLE.Admin) {
-        const [rooms, reservations, pending] = await Promise.all([
-          supabase.from('rooms').select('id', { count: 'exact', head: true }),
-          supabase.from('reservations').select('id', { count: 'exact', head: true }),
-          supabase.from('reservations').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-        ]);
-        setStats({ rooms: rooms.count ?? 0, reservations: reservations.count ?? 0, pending: pending.count ?? 0, today: 0, upcoming: 0 });
+        try {
+          const [rooms, reservations, pending] = await Promise.all([
+            supabase.from('rooms').select('id', { count: 'exact', head: true }),
+            supabase.from('reservations').select('id', { count: 'exact', head: true }),
+            supabase.from('reservations').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+          ]);
+          setStats({ rooms: rooms.count ?? 0, reservations: reservations.count ?? 0, pending: pending.count ?? 0, today: 0, upcoming: 0 });
+        } catch (error) {
+          console.error('Error fetching admin stats:', error);
+        }
       }
 
       if (role === ROLE.Student && user?.id) {
-        const { count } = await supabase.from('reservations').select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id).gt('start_time', new Date().toISOString());
-        setStats(s => ({ ...s, upcoming: count ?? 0 }));
+        try {
+          const { count } = await supabase.from('reservations').select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id).gt('start_time', new Date().toISOString());
+          setStats(s => ({ ...s, upcoming: count ?? 0 }));
+        } catch (error) {
+          console.error('Error fetching student stats:', error);
+        }
       }
-
-      setLoading(false);
     };
     load();
-  }, [role, roleLoading, user?.id]);
-
-  if (roleLoading || loading) return <Center h={500}><Loader size="lg" /></Center>;
+  }, [role, user?.id]);
 
   return (
     <Container size="xl" fluid>

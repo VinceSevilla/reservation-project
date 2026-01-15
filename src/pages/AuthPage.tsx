@@ -29,8 +29,8 @@ export default function AuthPage() {
       alert('Check your email for confirmation!');
       setEmail('');
       setPassword('');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sign up failed');
     } finally {
       setSigningIn(false);
     }
@@ -43,8 +43,8 @@ export default function AuthPage() {
     try {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) throw err;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sign in failed');
     } finally {
       setSigningIn(false);
     }
@@ -67,11 +67,10 @@ export default function AuthPage() {
       console.log('Error:', err);
       if (err) throw err;
       console.log('Step 3: No error, OAuth should be processing');
-    } catch (err: any) {
+    } catch (err) {
       console.error('=== GOOGLE SIGNIN ERROR ===');
-      console.error('Error message:', err.message);
       console.error('Error object:', err);
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Google sign in failed');
       setSigningIn(false);
     }
   };
