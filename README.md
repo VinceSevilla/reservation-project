@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏢 RoomReserve
+# RoomReserve
 
 **A Modern Room Reservation Management System**
 
@@ -340,7 +340,7 @@ supabase login
 supabase functions deploy reservation-status-email
 ```
 
-## 🛣️ Roadmap
+## Roadmap
 
 - [ ] Recurring reservations support
 - [ ] Real-time conflict detection UI
@@ -376,7 +376,7 @@ Contributions are what make the open-source community amazing! Any contributions
 
 Distributed under the MIT License. See `LICENSE` file for more information.
 
-## 👨 Author
+## Author
 
 **Your Name**
 - GitHub: [@VinceSevilla](https://github.com/VinceSevilla)
@@ -403,9 +403,9 @@ Found a bug? Have a feature request? Please [open an issue](https://github.com/V
 
 If you have any questions or need help getting started:
 
-- 📧 Email: sevillavincearnold@gmail.com
-- 💬 Open an issue on GitHub
-- 📖 Check the documentation
+- Email: sevillavincearnold@gmail.com
+- Open an issue on GitHub
+- Check the documentation
 
 ---
 
